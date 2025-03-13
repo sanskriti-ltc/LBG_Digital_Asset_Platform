@@ -1,5 +1,7 @@
 # LBG Hedera POC Backend
+
 This project is a Nest.js backend application that interacts with the Hedera Token Service on the testnet. It provides endpoints for creating, minting, redeeming, associating, dissociating, and transferring tokens. The application dynamically sets the operator based on the `requesterName` provided in the request body.
+
 ## Prerequisites
 
 - Node.js
