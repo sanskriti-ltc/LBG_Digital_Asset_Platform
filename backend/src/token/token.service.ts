@@ -4,32 +4,37 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+
 @Injectable()
 export class TokenService {
-    private getClient(requesterName: string) {
-        const accountId = AccountId.fromString(process.env[`${requesterName}_account_operator_id`] as unknown as string);
-        const operatorKey = PrivateKey.fromStringED25519(process.env[`${requesterName}_account_operator_key`] as unknown as string);
-        const client = Client.forTestnet().setOperator(accountId, operatorKey);
-        return { client, accountId, operatorKey };
+    private operatorId = AccountId.fromString(process.env.operator_id as unknown as string);
+    private operatorKey = PrivateKey.fromStringED25519(process.env.operator_key as unknown as string);
+    private client = Client.forTestnet().setOperator(this.operatorId, this.operatorKey);
+
+    private getAccountDetails(sender: string) {
+        const accountId = AccountId.fromString(process.env[`${sender}_id`] as unknown as string);
+        const accountKey = PrivateKey.fromStringED25519(process.env[`${sender}_key`] as unknown as string);
+        return { accountId, accountKey };
     }
 
-    async createToken(body: { tokenName: string; symbol: string; requesterName: string }) {
+    async createToken(body: { tokenName: string; symbol: string; }) {
         try {
-            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
             let tokenCreateTx = await new TokenCreateTransaction()
                 .setTokenName(body.tokenName)
                 .setTokenSymbol(body.symbol)
                 .setTokenType(TokenType.FungibleCommon)
-                .setDecimals(2)
+                .setDecimals(0)
                 .setInitialSupply(10000)
-                .setTreasuryAccountId(accountId)
+                .setTreasuryAccountId(this.operatorId)
+                .setAdminKey(this.operatorKey) 
+                .setFreezeDefault(false)
                 .setSupplyType(TokenSupplyType.Infinite)
-                .setSupplyKey(operatorKey)
-                .freezeWith(client);
+                .setSupplyKey(this.operatorKey)
+                .freezeWith(this.client);
 
-            let tokenCreateSign = await tokenCreateTx.sign(operatorKey);
-            let tokenCreateSubmit = await tokenCreateSign.execute(client);
-            let tokenCreateRx = await tokenCreateSubmit.getReceipt(client);
+            let tokenCreateSign = await tokenCreateTx.sign(this.operatorKey);;
+            let tokenCreateSubmit = await tokenCreateSign.execute(this.client);
+            let tokenCreateRx = await tokenCreateSubmit.getReceipt(this.client);
             let tokenId = tokenCreateRx.tokenId;
             console.log(`- Created token with ID: ${tokenId} \n`);
 
@@ -38,177 +43,183 @@ export class TokenService {
             }
             return { statusCode: HttpStatus.CREATED, message: 'Token created successfully', tokenCreateRx };
         } catch (error) {
-            throw new HttpException('Failed to create token', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to create token', HttpStatus.BAD_REQUEST, error);
         }
     }
 
     async mintToken(body: {
-        tokenId: string; amount: number; requesterName: string
+        tokenId: string; amount: number;
     }) {
         try {
-            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
+            // const { accountId, accountKey } = this.getAccountDetails(body.sender);
             const transaction = await new TokenMintTransaction()
                 .setTokenId(body.tokenId)
                 .setAmount(body.amount)
-                .freezeWith(client);
+                .freezeWith(this.client);
 
-            const signTx = await transaction.sign(operatorKey);
-            const txResponse = await signTx.execute(client);
-            const receipt = await txResponse.getReceipt(client);
+            const signTx = await transaction.sign(this.operatorKey);
+            const txResponse = await signTx.execute(this.client);
+            const receipt = await txResponse.getReceipt(this.client);
             if (!receipt.status) {
                 throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
             }
             return { statusCode: HttpStatus.OK, message: 'Token minted successfully', receipt };
         } catch (error) {
-            throw new HttpException('Failed to mint token', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to mint token', HttpStatus.BAD_REQUEST, error);
         }
     }
 
-    async redeemToken(body: { tokensToRedeem: number; requesterName: string }) {
+    async redeemToken(body: { tokensToRedeem: number; sender: string }) {
         try {
-            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
+            const { accountId, accountKey } = this.getAccountDetails(body.sender);
             const transaction = await new TokenBurnTransaction()
                 .setAmount(body.tokensToRedeem)
-                .execute(client);
-            const receipt = await transaction.getReceipt(client);
+                .execute(this.client);
+            const receipt = await transaction.getReceipt(this.client);
             if (!receipt.status) {
                 throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
             }
-            return { statusCode: HttpStatus.OK, message: 'Token redeemed successfully', status: receipt.status.toString() };
+            return { statusCode: HttpStatus.OK, message: 'Token redeemed successfully', receipt };
         } catch (error) {
-            throw new HttpException('Failed to redeem token', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to redeem token', HttpStatus.BAD_REQUEST, error);
         }
     }
 
-    async associateToken(body: { tokenId: string; account: string; requesterName: string }) {
+    async associateToken(body: { tokenId: string; sender: string }) {
         try {
-            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
+            const { accountId, accountKey } = this.getAccountDetails(body.sender);
             const transaction = await new TokenAssociateTransaction()
-                .setAccountId(body.account)
+                .setAccountId(accountId)
                 .setTokenIds([body.tokenId])
-                .execute(client);
-            const receipt = await transaction.getReceipt(client);
+                .freezeWith(this.client)
+                .sign(accountKey);
+
+            const txResponse = await transaction.execute(this.client);
+            const receipt = await txResponse.getReceipt(this.client);
+
             if (!receipt.status) {
                 throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
             }
-            return { statusCode: HttpStatus.OK, message: 'Token associated successfully', status: receipt.status.toString() };
+            return { statusCode: HttpStatus.OK, message: 'Token associated successfully', receipt };
         } catch (error) {
-            throw new HttpException('Failed to associate token', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to associate token', HttpStatus.BAD_REQUEST, error);
         }
     }
 
-    async dissociateToken(body: { tokenId: string; account: string; requesterName: string }) {
+    async dissociateToken(body: { tokenId: string; account: string; sender: string }) {
         try {
-            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
+            const { accountId, accountKey } = this.getAccountDetails(body.sender);
             const transaction = await new TokenDissociateTransaction()
                 .setAccountId(body.account)
                 .setTokenIds([body.tokenId])
-                .execute(client);
-            const receipt = await transaction.getReceipt(client);
+                .execute(this.client);
+            const receipt = await transaction.getReceipt(this.client);
             if (!receipt.status) {
                 throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
             }
-            return { statusCode: HttpStatus.OK, message: 'Token dissociated successfully', status: receipt.status.toString() };
+            return { statusCode: HttpStatus.OK, message: 'Token dissociated successfully', receipt };
         } catch (error) {
-            throw new HttpException('Failed to dissociate token', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to dissociate token', HttpStatus.BAD_REQUEST, error);
         }
     }
 
     async transferToken(body: {
-        tokenId: string; fromAccount: string; toAccount: string; requesterName: string
+        tokenId: string; receiver: string; sender: string; amount: number
     }) {
         try {
-            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
-            const transaction = await new TransferTransaction()
-                .addTokenTransfer(body.tokenId, body.fromAccount, -1)
-                .addTokenTransfer(body.tokenId, body.toAccount, 1)
-                .execute(client);
-            const receipt = await transaction.getReceipt(client);
-            if (!receipt.status) {
+            const sender = this.getAccountDetails(body.sender);
+            const receiver = this.getAccountDetails(body.receiver);
+
+            const tokenTransferTx = await new TransferTransaction()
+                .addTokenTransfer(body.tokenId, sender.accountId, -body.amount)
+                .addTokenTransfer(body.tokenId, receiver.accountId, body.amount)
+                .freezeWith(this.client)
+                .sign(this.operatorKey);
+
+            let tokenTransferSubmit = await tokenTransferTx.execute(this.client);
+            let tokenTransferRx = await tokenTransferSubmit.getReceipt(this.client);            
+            if (!tokenTransferRx.status) {
                 throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
             }
-            return { statusCode: HttpStatus.OK, message: 'Token transferred successfully', status: receipt.status.toString() };
+            return { statusCode: HttpStatus.OK, message: 'Token transferred successfully', tokenTransferRx };
         } catch (error) {
-            throw new HttpException('Failed to transfer token', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to transfer token', HttpStatus.BAD_REQUEST, error);
         }
     }
 
-    async getAsset(requesterName: string, tokenId: string) {
+    async getAsset(sender: string, tokenId: string) {
         try {
-            const { client } = this.getClient(requesterName);
+            // const { client } = this.getAccountDetails(sender);
 
             const tokenInfo = await new TokenInfoQuery()
                 .setTokenId(tokenId)
-                .execute(client);
+                .execute(this.client);
 
             return { statusCode: HttpStatus.OK, message: 'Account asset retrieved successfully', tokenInfo };
         } catch (error) {
-            throw new HttpException('Failed to retrieve account asset', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to retrieve account asset', HttpStatus.BAD_REQUEST, error);
         }
     }
 
-    async getAssets(requesterName: string) {
+    async getAssets(sender: string) {
         try {
-            const { client, accountId, operatorKey } = this.getClient(requesterName);
+            const { accountId, accountKey } = this.getAccountDetails(sender);
             const query = new AccountBalanceQuery().setAccountId(accountId);
-            const balance = await query.execute(client);
+            const balance = await query.execute(this.client);
             if (!balance.tokens) {
                 throw new HttpException('No assets found', HttpStatus.NOT_FOUND);
             }
             return { statusCode: HttpStatus.OK, message: 'Assets retrieved successfully', assets: balance.tokens };
         } catch (error) {
-            throw new HttpException('Failed to retrieve assets', HttpStatus.INTERNAL_SERVER_ERROR, { cause: new Error(error) });
+            throw new HttpException(error.message || 'Failed to retrieve assets', HttpStatus.BAD_REQUEST, { cause: new Error(error) });
         }
     }
 
-    async getBalance(requesterName: string) {
+    async getBalance(sender: string) {
         try {
-            const { client, accountId, operatorKey } = this.getClient(requesterName);
+            const { accountId, accountKey } = this.getAccountDetails(sender);
             const query = new AccountBalanceQuery().setAccountId(accountId);
-            const balance = await query.execute(client);
+            const balance = await query.execute(this.client);
             return { statusCode: HttpStatus.OK, message: 'Balance retrieved successfully', balance: balance.hbars.toTinybars() };
         } catch (error) {
-            throw new HttpException('Failed to retrieve balance', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to retrieve balance', HttpStatus.BAD_REQUEST, error);
         }
     }
 
     async getAccountBalance(account: string) {
         try {
-            const client = Client.forTestnet();
             const query = new AccountBalanceQuery().setAccountId(account);
-            const balance = JSON.parse(await query.execute(client) as unknown as string);
+            const balance = JSON.parse(await query.execute(this.client) as unknown as string);
             delete balance.tokens;
             return { statusCode: HttpStatus.OK, message: 'Account balance retrieved successfully', balance };
         } catch (error) {
-            throw new HttpException('Failed to retrieve account balance', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to retrieve account balance', HttpStatus.BAD_REQUEST, error);
         }
     }
 
     async getAccountAssets(account: string) {
         try {
-            const client = Client.forTestnet();
             const query = new AccountBalanceQuery().setAccountId(account);
-            const balance = await query.execute(client);
+            const balance = await query.execute(this.client);
             if (!balance.tokens) {
                 throw new HttpException('No assets found', HttpStatus.NOT_FOUND);
             }
             return { statusCode: HttpStatus.OK, message: 'Account assets retrieved successfully', assets: balance.tokens };
         } catch (error) {
-            throw new HttpException('Failed to retrieve account assets', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to retrieve account assets', HttpStatus.BAD_REQUEST, error);
         }
     }
 
     async getTransactionHistory(account: string) {
         try {
-            const client = Client.forTestnet();
             // const query = new TransactionRecordQuery().setAccountId(account);
-            // const records = await query.execute(client);
+            // const records = await query.execute(this.client);
             // if (!records.length) {
             //     throw new HttpException('No transactions found', HttpStatus.NOT_FOUND);
             // }
             // return { statusCode: HttpStatus.OK, message: 'Transaction history retrieved successfully', transactions: records };
         } catch (error) {
-            throw new HttpException('Failed to retrieve transaction history', HttpStatus.INTERNAL_SERVER_ERROR, error);
+            throw new HttpException(error.message || 'Failed to retrieve transaction history', HttpStatus.BAD_REQUEST, error);
         }
     }
 }
