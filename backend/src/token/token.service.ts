@@ -1,5 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { Client, TokenCreateTransaction, TokenMintTransaction, TokenBurnTransaction, TokenAssociateTransaction, TokenDissociateTransaction, TransferTransaction, AccountBalanceQuery, TransactionRecordQuery, AccountId, PrivateKey, TokenInfoQuery, TokenType, TokenSupplyType } from '@hashgraph/sdk';
+import { Client, TokenCreateTransaction, TokenMintTransaction, TokenBurnTransaction, TokenAssociateTransaction, TokenDissociateTransaction, TransferTransaction, AccountBalanceQuery, TransactionRecordQuery, AccountId, PrivateKey, TokenInfoQuery, TokenType, TokenSupplyType, CustomFixedFee, TokenUpdateTransaction } from '@hashgraph/sdk';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -17,7 +17,7 @@ export class TokenService {
         return { accountId, accountKey };
     }
 
-    async createToken(body: { tokenName: string; symbol: string; }) {
+    async createToken(body: { tokenName: string; symbol: string; tokenValue: number }) {
         try {
             let tokenCreateTx = await new TokenCreateTransaction()
                 .setTokenName(body.tokenName)
@@ -30,6 +30,7 @@ export class TokenService {
                 .setFreezeDefault(false)
                 .setSupplyType(TokenSupplyType.Infinite)
                 .setSupplyKey(this.operatorKey)
+                .setTokenMemo(`tokenValue:${body.tokenValue}`)
                 .freezeWith(this.client);
 
             let tokenCreateSign = await tokenCreateTx.sign(this.operatorKey);;
@@ -141,7 +142,7 @@ export class TokenService {
                 .addTokenTransfer(body.tokenId, sender.accountId, -body.amount)
                 .addTokenTransfer(body.tokenId, receiver.accountId, body.amount)
                 .freezeWith(this.client)
-                .sign(this.operatorKey);
+                .sign(sender.accountKey);
 
             let tokenTransferSubmit = await tokenTransferTx.execute(this.client);
             let tokenTransferRx = await tokenTransferSubmit.getReceipt(this.client);
@@ -232,6 +233,98 @@ export class TokenService {
             return { statusCode: HttpStatus.OK, message: 'Account assets retrieved successfully', assets: balance.tokens };
         } catch (error) {
             throw new HttpException(error.message || 'Failed to retrieve account assets', HttpStatus.BAD_REQUEST, error);
+        }
+    }
+
+    async purchaseToken(body: { tokenId: string, amount: number, sender: string }) {
+        try {
+            const { accountId, accountKey } = this.getAccountDetails(body.sender);
+            const tokenInfo = await new TokenInfoQuery().setTokenId(body.tokenId).execute(this.client);
+            const tokenValue = parseFloat(tokenInfo.tokenMemo.split(':')[1]);
+
+            const totalCost = tokenValue * body.amount;
+            const accountBalanceQuery = new AccountBalanceQuery().setAccountId(accountId);
+            const accountBalance = await accountBalanceQuery.execute(this.client);
+
+            const transaction = await new TransferTransaction()
+                .addHbarTransfer(accountId, -totalCost)
+                .addHbarTransfer(this.operatorId, totalCost)
+                .addTokenTransfer(body.tokenId, this.operatorId, -body.amount)
+                .addTokenTransfer(body.tokenId, accountId, body.amount)
+                .freezeWith(this.client)
+                .sign(accountKey);
+
+            let tokenFundTransferSubmit = await transaction.execute(this.client);
+            let tokenFundTransferRx = await tokenFundTransferSubmit.getReceipt(this.client);
+
+            let tokenBody = {
+                tokenId: body.tokenId,
+                sender: "operator",
+                receiver: body.sender,
+                amount: body.amount
+            }
+
+            if (!tokenFundTransferRx ) {
+                throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+            }
+
+            return { statusCode: HttpStatus.OK, message: 'Tokens purchased successfully', tokenFundTransferRx };
+        } catch (error) {
+            throw new HttpException(error.message || 'Failed to purchase tokens', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async redeemToken(body: { tokenId: string, amount: number, sender: string }) {
+        try {
+            const { accountId, accountKey } = this.getAccountDetails(body.sender);
+            const tokenInfo = await new TokenInfoQuery().setTokenId(body.tokenId).execute(this.client);
+            const tokenValue = parseFloat(tokenInfo.tokenMemo.split(':')[1]);
+
+            const totalRefund = tokenValue * body.amount;
+
+            const transaction = await new TransferTransaction()
+                .addHbarTransfer(this.operatorId, -totalRefund)
+                .addHbarTransfer(accountId, totalRefund)
+                .addTokenTransfer(body.tokenId, accountId, -body.amount)
+                .addTokenTransfer(body.tokenId, this.operatorId, body.amount)
+                .freezeWith(this.client)
+                .sign(this.operatorKey);
+
+            let tokenRefundTransferSubmit = await transaction.execute(this.client);
+            let tokenRefundTransferRx = await tokenRefundTransferSubmit.getReceipt(this.client);
+
+            let tokenBody = {
+                tokenId: body.tokenId,
+                sender: body.sender,
+                receiver: "operator",
+                amount: body.amount
+            }
+
+            if (!tokenRefundTransferRx ) {
+                throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+            }
+
+            return { statusCode: HttpStatus.OK, message: 'Tokens redeemed successfully', tokenRefundTransferSubmit };
+        } catch (error) {
+            throw new HttpException(error.message || 'Failed to redeem tokens', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async tokenValueUpdate(tokenId: string, newTokenValue: number) {
+        try {
+            const transaction = await new TokenUpdateTransaction()
+                .setTokenId(tokenId)
+                .setTokenMemo(`tokenValue:${newTokenValue}`)
+                .execute(this.client);
+
+            const receipt = await transaction.getReceipt(this.client);
+            if (!receipt.status) {
+                throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+            }
+
+            return { statusCode: HttpStatus.OK, message: 'Token value updated successfully', status: receipt.status.toString(), receipt };
+        } catch (error) {
+            throw new HttpException(error.message || 'Failed to update token value', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

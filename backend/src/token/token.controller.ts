@@ -6,7 +6,7 @@ export class TokenController {
   constructor(private readonly tokenService: TokenService) { }
 
   @Post('create')
-  createToken(@Body() body: { tokenName: string; symbol: string; }) {
+  createToken(@Body() body: { tokenName: string; symbol: string; tokenValue:number}) {
     return this.tokenService.createToken(body);
   }
 
@@ -20,10 +20,15 @@ export class TokenController {
     return this.tokenService.burnToken(body);
   }
 
-  // @Post('redeem')
-  // redeemToken(@Body() body: { tokenId:string; amount: number; sender: string }) {
-  //   return this.tokenService.redeemToken(body);
-  // }
+  @Post('purchase')
+  purchaseToken(@Body() body: { tokenId:string; amount: number; sender: string }) {
+    return this.tokenService.purchaseToken(body);
+  }
+
+  @Post('redeem')
+  redeemToken(@Body() body: { tokenId:string; amount: number; sender: string }) {
+    return this.tokenService.redeemToken(body);
+  }
 
   @Post('associate')
   associateToken(@Body() body: { tokenId: string; sender: string; }) {
