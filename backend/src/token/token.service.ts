@@ -10,12 +10,12 @@ export class TokenService {
         const accountId = AccountId.fromString(process.env[`${requesterName}_account_operator_id`] as unknown as string);
         const operatorKey = PrivateKey.fromStringED25519(process.env[`${requesterName}_account_operator_key`] as unknown as string);
         const client = Client.forTestnet().setOperator(accountId, operatorKey);
-        return {client, accountId, operatorKey};
+        return { client, accountId, operatorKey };
     }
 
     async createToken(body: { tokenName: string; symbol: string; requesterName: string }) {
         try {
-            const {client, accountId, operatorKey} = this.getClient(body.requesterName);
+            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
             let tokenCreateTx = await new TokenCreateTransaction()
                 .setTokenName(body.tokenName)
                 .setTokenSymbol(body.symbol)
@@ -42,17 +42,23 @@ export class TokenService {
         }
     }
 
-    async mintToken(body: { amount: number; requesterName: string }) {
+    async mintToken(body: {
+        tokenId: string; amount: number; requesterName: string
+    }) {
         try {
-            const {client, accountId, operatorKey} = this.getClient(body.requesterName);
+            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
             const transaction = await new TokenMintTransaction()
+                .setTokenId(body.tokenId)
                 .setAmount(body.amount)
-                .execute(client);
-            const receipt = await transaction.getReceipt(client);
+                .freezeWith(client);
+
+            const signTx = await transaction.sign(operatorKey);
+            const txResponse = await signTx.execute(client);
+            const receipt = await txResponse.getReceipt(client);
             if (!receipt.status) {
                 throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
             }
-            return { statusCode: HttpStatus.OK, message: 'Token minted successfully', status: receipt.status.toString() };
+            return { statusCode: HttpStatus.OK, message: 'Token minted successfully', receipt };
         } catch (error) {
             throw new HttpException('Failed to mint token', HttpStatus.INTERNAL_SERVER_ERROR, error);
         }
@@ -60,7 +66,7 @@ export class TokenService {
 
     async redeemToken(body: { tokensToRedeem: number; requesterName: string }) {
         try {
-            const {client, accountId, operatorKey} = this.getClient(body.requesterName);
+            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
             const transaction = await new TokenBurnTransaction()
                 .setAmount(body.tokensToRedeem)
                 .execute(client);
@@ -76,7 +82,7 @@ export class TokenService {
 
     async associateToken(body: { tokenId: string; account: string; requesterName: string }) {
         try {
-            const {client, accountId, operatorKey} = this.getClient(body.requesterName);
+            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
             const transaction = await new TokenAssociateTransaction()
                 .setAccountId(body.account)
                 .setTokenIds([body.tokenId])
@@ -93,7 +99,7 @@ export class TokenService {
 
     async dissociateToken(body: { tokenId: string; account: string; requesterName: string }) {
         try {
-            const {client, accountId, operatorKey} = this.getClient(body.requesterName);
+            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
             const transaction = await new TokenDissociateTransaction()
                 .setAccountId(body.account)
                 .setTokenIds([body.tokenId])
@@ -112,7 +118,7 @@ export class TokenService {
         tokenId: string; fromAccount: string; toAccount: string; requesterName: string
     }) {
         try {
-            const {client, accountId, operatorKey} = this.getClient(body.requesterName);
+            const { client, accountId, operatorKey } = this.getClient(body.requesterName);
             const transaction = await new TransferTransaction()
                 .addTokenTransfer(body.tokenId, body.fromAccount, -1)
                 .addTokenTransfer(body.tokenId, body.toAccount, 1)
@@ -129,7 +135,7 @@ export class TokenService {
 
     async getAsset(requesterName: string, tokenId: string) {
         try {
-            const {client} = this.getClient(requesterName);
+            const { client } = this.getClient(requesterName);
 
             const tokenInfo = await new TokenInfoQuery()
                 .setTokenId(tokenId)
@@ -143,7 +149,7 @@ export class TokenService {
 
     async getAssets(requesterName: string) {
         try {
-            const {client, accountId, operatorKey} = this.getClient(requesterName);
+            const { client, accountId, operatorKey } = this.getClient(requesterName);
             const query = new AccountBalanceQuery().setAccountId(accountId);
             const balance = await query.execute(client);
             if (!balance.tokens) {
@@ -157,7 +163,7 @@ export class TokenService {
 
     async getBalance(requesterName: string) {
         try {
-            const {client, accountId, operatorKey} = this.getClient(requesterName);
+            const { client, accountId, operatorKey } = this.getClient(requesterName);
             const query = new AccountBalanceQuery().setAccountId(accountId);
             const balance = await query.execute(client);
             return { statusCode: HttpStatus.OK, message: 'Balance retrieved successfully', balance: balance.hbars.toTinybars() };
@@ -171,7 +177,7 @@ export class TokenService {
             const client = Client.forTestnet();
             const query = new AccountBalanceQuery().setAccountId(account);
             const balance = JSON.parse(await query.execute(client) as unknown as string);
-            delete balance.tokens;            
+            delete balance.tokens;
             return { statusCode: HttpStatus.OK, message: 'Account balance retrieved successfully', balance };
         } catch (error) {
             throw new HttpException('Failed to retrieve account balance', HttpStatus.INTERNAL_SERVER_ERROR, error);

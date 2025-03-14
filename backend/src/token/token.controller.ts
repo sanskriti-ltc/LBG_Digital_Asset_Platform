@@ -11,7 +11,7 @@ export class TokenController {
   }
 
   @Post('mint')
-  mintToken(@Body() body: { amount: number; requesterName: string }) {
+  mintToken(@Body() body: {tokenId: string; amount: number; requesterName: string }) {
     return this.tokenService.mintToken(body);
   }
 
