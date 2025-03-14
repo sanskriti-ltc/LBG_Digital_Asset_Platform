@@ -15,10 +15,15 @@ export class TokenController {
     return this.tokenService.mintToken(body);
   }
 
-  @Post('redeem')
-  redeemToken(@Body() body: { tokensToRedeem: number; sender: string }) {
-    return this.tokenService.redeemToken(body);
+  @Post('burn')
+  burnToken(@Body() body: { tokenId:string; amount: number; sender: string }) {
+    return this.tokenService.burnToken(body);
   }
+
+  // @Post('redeem')
+  // redeemToken(@Body() body: { tokenId:string; amount: number; sender: string }) {
+  //   return this.tokenService.redeemToken(body);
+  // }
 
   @Post('associate')
   associateToken(@Body() body: { tokenId: string; sender: string; }) {

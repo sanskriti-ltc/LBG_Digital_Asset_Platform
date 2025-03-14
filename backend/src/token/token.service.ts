@@ -26,7 +26,7 @@ export class TokenService {
                 .setDecimals(0)
                 .setInitialSupply(10000)
                 .setTreasuryAccountId(this.operatorId)
-                .setAdminKey(this.operatorKey) 
+                .setAdminKey(this.operatorKey)
                 .setFreezeDefault(false)
                 .setSupplyType(TokenSupplyType.Infinite)
                 .setSupplyKey(this.operatorKey)
@@ -69,13 +69,20 @@ export class TokenService {
         }
     }
 
-    async redeemToken(body: { tokensToRedeem: number; sender: string }) {
+    async burnToken(body: { tokenId: string; amount: number; sender: string }) {
         try {
             const { accountId, accountKey } = this.getAccountDetails(body.sender);
             const transaction = await new TokenBurnTransaction()
-                .setAmount(body.tokensToRedeem)
-                .execute(this.client);
-            const receipt = await transaction.getReceipt(this.client);
+                .setTokenId(body.tokenId)
+                .setAmount(body.amount)
+                .freezeWith(this.client);
+
+            const signTx = await transaction.sign(accountKey);
+
+            const txResponse = await signTx.execute(this.client);
+
+            const receipt = await txResponse.getReceipt(this.client);
+
             if (!receipt.status) {
                 throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
             }
@@ -137,7 +144,7 @@ export class TokenService {
                 .sign(this.operatorKey);
 
             let tokenTransferSubmit = await tokenTransferTx.execute(this.client);
-            let tokenTransferRx = await tokenTransferSubmit.getReceipt(this.client);            
+            let tokenTransferRx = await tokenTransferSubmit.getReceipt(this.client);
             if (!tokenTransferRx.status) {
                 throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
             }
@@ -149,13 +156,31 @@ export class TokenService {
 
     async getAsset(sender: string, tokenId: string) {
         try {
-            // const { client } = this.getAccountDetails(sender);
+            const { accountId, accountKey } = this.getAccountDetails(sender);
+
+            const query = new AccountBalanceQuery().setAccountId(accountId);
+            const balance = await query.execute(this.client);
+            if (!balance.tokens) {
+                throw new HttpException('Token not found in account', HttpStatus.NOT_FOUND);
+            }
+            const tokenBalance = balance.tokens.get(tokenId);
 
             const tokenInfo = await new TokenInfoQuery()
                 .setTokenId(tokenId)
                 .execute(this.client);
 
-            return { statusCode: HttpStatus.OK, message: 'Account asset retrieved successfully', tokenInfo };
+            return {
+                statusCode: HttpStatus.OK,
+                message: 'Token balance retrieved successfully',
+                token: {
+                    tokenId: tokenId,
+                    name: tokenInfo.name,
+                    symbol: tokenInfo.symbol,
+                    balance: tokenBalance
+                }
+
+                // return { statusCode: HttpStatus.OK, message: 'Account asset retrieved successfully', tokenInfo };
+            }
         } catch (error) {
             throw new HttpException(error.message || 'Failed to retrieve account asset', HttpStatus.BAD_REQUEST, error);
         }
