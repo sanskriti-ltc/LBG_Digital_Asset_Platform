@@ -301,14 +301,13 @@ export class TokenService {
             const transaction = await new TokenUpdateTransaction()
                 .setTokenId(tokenId)
                 .setTokenMemo(`tokenValue:${newTokenValue}`)
-                .execute(this.client);
+                .freezeWith(this.client)
+                .sign(this.operatorKey);
 
-            const receipt = await transaction.getReceipt(this.client);
-            if (!receipt.status) {
-                throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
-            }
+            let tokenValueUpdateTx = await transaction.execute(this.client);
+            let tokenValueUpdateTxRx = await tokenValueUpdateTx.getReceipt(this.client);
 
-            return { statusCode: HttpStatus.OK, message: 'Token value updated successfully', status: receipt.status.toString(), receipt };
+            return { statusCode: HttpStatus.OK, message: 'Token value updated successfully', tokenValueUpdateTxRx };
         } catch (error) {
             throw new HttpException(error.message || 'Failed to update token value', HttpStatus.INTERNAL_SERVER_ERROR);
         }
