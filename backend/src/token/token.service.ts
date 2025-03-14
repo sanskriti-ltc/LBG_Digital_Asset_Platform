@@ -257,13 +257,6 @@ export class TokenService {
             let tokenFundTransferSubmit = await transaction.execute(this.client);
             let tokenFundTransferRx = await tokenFundTransferSubmit.getReceipt(this.client);
 
-            let tokenBody = {
-                tokenId: body.tokenId,
-                sender: "operator",
-                receiver: body.sender,
-                amount: body.amount
-            }
-
             if (!tokenFundTransferRx ) {
                 throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
             }
@@ -292,13 +285,6 @@ export class TokenService {
 
             let tokenRefundTransferSubmit = await transaction.execute(this.client);
             let tokenRefundTransferRx = await tokenRefundTransferSubmit.getReceipt(this.client);
-
-            let tokenBody = {
-                tokenId: body.tokenId,
-                sender: body.sender,
-                receiver: "operator",
-                amount: body.amount
-            }
 
             if (!tokenRefundTransferRx ) {
                 throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
