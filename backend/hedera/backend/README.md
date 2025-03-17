@@ -12,7 +12,7 @@ This project is a Nest.js backend application that interacts with the Hedera Tok
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/naveenneelamlbg/LBG_Hedera_POC
+git clone https://github.com/naveenneelamlbg/LBG_Digital_Asset_Platform.git
 
 ## Project setup
 

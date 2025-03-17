@@ -12,4 +12,4 @@ This project is havind frontend and backend applications that interacts with the
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/naveenneelamlbg/LBG_Hedera_POC
+git clone https://github.com/naveenneelamlbg/LBG_Digital_Asset_Platform.git
