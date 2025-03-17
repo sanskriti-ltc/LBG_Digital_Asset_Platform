@@ -1,0 +1,304 @@
+{
+  "name": "LBG Hedera POC",
+  "version": "1",
+  "items": [
+    {
+      "type": "http",
+      "name": "app",
+      "seq": 1,
+      "request": {
+        "url": "http://localhost:3000",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token create",
+      "seq": 2,
+      "request": {
+        "url": "http://localhost:3000/token/create",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"tokenName\": \"LBGTestToken1\",\n  \"symbol\": \"LBGtT\",\n  \"tokenValue\": 2\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "account assets",
+      "seq": 8,
+      "request": {
+        "url": "http://localhost:3000/token/assets?sender=bob",
+        "method": "GET",
+        "headers": [],
+        "params": [
+          {
+            "name": "sender",
+            "value": "bob",
+            "type": "query",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": "{ \"tokenName\": \"testLbgToken\", \"symbol\": \"lbtestt\", \"requesterName\": \"alice\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "account asset",
+      "seq": 9,
+      "request": {
+        "url": "http://localhost:3000/token/asset?sender=bob&tokenId=0.0.5723208",
+        "method": "GET",
+        "headers": [],
+        "params": [
+          {
+            "name": "sender",
+            "value": "bob",
+            "type": "query",
+            "enabled": true
+          },
+          {
+            "name": "tokenId",
+            "value": "0.0.5723208",
+            "type": "query",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": "{ \"tokenName\": \"testLbgToken\", \"symbol\": \"lbtestt\", \"requesterName\": \"alice\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token mint",
+      "seq": 3,
+      "request": {
+        "url": "http://localhost:3000/token/mint",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{ \"tokenId\": \"0.0.5723189\", \"amount\": 100\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token redeem",
+      "seq": 7,
+      "request": {
+        "url": "http://localhost:3000/token/redeem",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"tokenId\": \"0.0.5723208\",\n  \"amount\": 30,\n  \"sender\": \"bob\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token associate",
+      "seq": 4,
+      "request": {
+        "url": "http://localhost:3000/token/associate",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"tokenId\": \"0.0.5732415\",\n  \"sender\": \"charlie\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token transfer",
+      "seq": 5,
+      "request": {
+        "url": "http://localhost:3000/token/transfer",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"tokenId\": \"0.0.5723128\",\n  \"sender\": \"bob\",\n  \"receiver\": \"operator\",\n  \"amount\":100\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token purchase",
+      "seq": 6,
+      "request": {
+        "url": "http://localhost:3000/token/purchase",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"tokenId\": \"0.0.5723208\",\n  \"amount\": 20,\n  \"sender\": \"bob\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "account balance",
+      "seq": 11,
+      "request": {
+        "url": "http://localhost:3000/token/account-balance?account=0.0.5720922",
+        "method": "GET",
+        "headers": [],
+        "params": [
+          {
+            "name": "account",
+            "value": "0.0.5720922",
+            "type": "query",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": "{ \"tokenName\": \"testLbgToken\", \"symbol\": \"lbtestt\", \"requesterName\": \"alice\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    }
+  ],
+  "environments": [],
+  "brunoConfig": {
+    "version": "1",
+    "name": "LBG Hedera POC",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ],
+    "size": 0,
+    "filesCount": 0
+  }
+}
