@@ -1,6 +1,6 @@
-# LBG Hedera POC
+# LBG Digital Asset Platform
 
-This project is havind frontend and backend applications that interacts with the Hedera Token Service on the testnet. backend provides endpoints for creating, minting, redeeming, associating, dissociating, and transferring tokens. The application dynamically sets the operator based on the `requesterName` provided in the request body.
+This project is having frontend and backend applications that interacts with the multiple blockchains. backend provides endpoints for creating, minting, redeeming, associating, dissociating, and transferring tokens.
 
 ## Prerequisites
 
