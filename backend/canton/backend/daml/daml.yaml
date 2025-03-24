@@ -1,0 +1,19 @@
+# for config file options, refer to
+# https://docs.daml.com/tools/assistant.html#project-config-file-daml-yaml
+
+sdk-version: 2.7.3
+name: sctratchpad
+source: daml
+init-script: Fund:setup
+version: 0.0.1
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - daml-script
+codegen:
+  js:
+    output-directory: ../damlModule
+    npm-scope: daml.ts
+# sandbox-options:
+#   # - "--auth-jwt-rs256-crt=./path/to/your-pem-file.pem"
+#   - "--auth-jwt-rs256-jwks=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsZWRnZXJJZCI6InNhbmRib3gtbGVkZ2VyIiwicGFydGljaXBhbnRJZCI6InNhbmRib3gtcGFydGljaXBhbnQiLCJhY3RBcyI6WyJBbGljZSJdLCJyZWFkQXMiOlsiQWxpY2UiXSwiZXhwIjoxNzQyNzU1MjM2fQ.lxs1G3ETEiav0nTuCNIYFW8oZ0XZpFXkjm3Mn7C_RXM"

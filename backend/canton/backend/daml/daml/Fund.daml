@@ -1,0 +1,55 @@
+module Fund where
+
+import Daml.Script
+
+type BondId = ContractId SterlingShortTermMoneyMarketFundVASSTAI
+
+template SterlingShortTermMoneyMarketFundVASSTAI
+  with
+    owner       : Party
+    issuer      : Party
+    amount      : Decimal
+    participants: [Party]
+    couponRate : Int
+    maturityDate : Text
+  where
+    ensure amount > 0.0
+    signatory issuer
+    observer owner, participants
+    choice Transfer : BondId
+      with
+        newOwner : Party
+        newParticipants: [Party]
+      controller owner
+      do create this with
+           owner = newOwner
+           participants = newParticipants
+
+setup : Script BondId
+setup = script do
+  -- user_setup_begin
+  lloydsBank <- allocatePartyWithHint "LloydsBank" (PartyIdHint "LloydsBank")
+  alice <- allocatePartyWithHint "Alice" (PartyIdHint "Alice")
+  bob <- allocatePartyWithHint "Bob" (PartyIdHint "Bob")
+  lloydsBankId <- validateUserId "lloydsBank"
+  aliceId <- validateUserId "alice"
+  bobId <- validateUserId "bob"
+  createUser (User lloydsBankId (Some lloydsBank)) [CanActAs lloydsBank]
+  createUser (User aliceId (Some alice)) [CanActAs alice]
+  createUser (User bobId (Some bob)) [CanActAs bob]
+  -- user_setup_end
+
+  lloydsBankBond <- submit lloydsBank do
+    createCmd SterlingShortTermMoneyMarketFundVASSTAI with
+      issuer = lloydsBank
+      owner = lloydsBank
+      amount = 1000.0
+      participants = [lloydsBank]
+      couponRate = 34
+      maturityDate = "2026-01-26T17:16:18.471Z"
+
+  aliceBond <- submit lloydsBank do
+    exerciseCmd lloydsBankBond Transfer with newOwner = alice, newParticipants=[lloydsBank, alice]
+
+  submit alice do
+    exerciseCmd aliceBond Transfer with newOwner = bob, newParticipants=[alice, bob]

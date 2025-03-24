@@ -1,0 +1,115 @@
+module Token where
+
+import Daml.Script
+
+template Token
+  with
+    issuer: Party
+    owner: Party
+    symbol: Text
+    amount: Int
+  where
+    signatory issuer, owner
+    observer owner
+    ensure amount >= 0
+
+    choice Mint : ContractId Token
+      with
+        newAmount: Int
+      controller issuer
+      do
+        assertMsg "Amount must be positive" (newAmount > 0)
+        create this with amount = amount + newAmount
+
+    choice Transfer : ContractId Token
+      with
+        newOwner: Party
+        transferAmount: Int
+      controller owner
+      do
+        assertMsg "Transfer amount must be positive" (transferAmount > 0)
+        assertMsg "Insufficient balance" (amount >= transferAmount)
+        create this with owner = newOwner, amount = transferAmount
+        create this with amount = amount - transferAmount
+
+    choice Redeem : ContractId Token
+      with
+        redeemAmount: Int
+      controller owner
+      do
+        assertMsg "Redeem amount must be positive" (redeemAmount > 0)
+        assertMsg "Insufficient balance" (amount >= redeemAmount)
+        create this with amount = amount - redeemAmount
+
+    choice Purchase : ContractId Token
+      with
+        buyer: Party
+        purchaseAmount: Int
+      controller owner
+      do
+        assertMsg "Purchase amount must be positive" (purchaseAmount > 0)
+        assertMsg "Insufficient balance" (amount >= purchaseAmount)
+        create this with owner = buyer, amount = purchaseAmount
+
+    choice UpdateValue : ContractId Token
+      with
+        newValue: Int
+      controller issuer
+      do
+        assertMsg "New value must be positive" (newValue > 0)
+        create this with amount = newValue
+
+setup : Script() 
+-- (Party, Party, ContractId Token)
+setup = script do
+
+  issuer <- allocateParty "Issuer"
+  owner <- allocateParty "Owner"
+  tokenCid <- submit issuer do
+    createCmd Token with
+      issuer = issuer
+      owner = owner
+      symbol = "TKN"
+      amount = 100
+--   return (issuer, owner, tokenCid)
+
+testMintToken : Script ()
+testMintToken = script do
+  (issuer, owner, tokenCid) <- setup
+  submit issuer do
+    exerciseCmd tokenCid Mint with newAmount = 50
+  pure ()
+
+testTransferToken : Script ()
+testTransferToken = script do
+  (issuer, owner, tokenCid) <- setup
+  newOwner <- allocateParty "NewOwner"
+  submit owner do
+    exerciseCmd tokenCid Transfer with
+      newOwner = newOwner
+      transferAmount = 30
+  pure ()
+
+testRedeemToken : Script ()
+testRedeemToken = script do
+  (issuer, owner, tokenCid) <- setup
+  submit owner do
+    exerciseCmd tokenCid Redeem with redeemAmount = 20
+  pure ()
+
+testPurchaseToken : Script ()
+testPurchaseToken = script do
+  (issuer, owner, tokenCid) <- setup
+  buyer <- allocateParty "Buyer"
+  submit owner do
+    exerciseCmd tokenCid Purchase with
+      buyer = buyer
+      purchaseAmount = 10
+  pure ()
+
+testUpdateTokenValue : Script ()
+testUpdateTokenValue = script do
+  (issuer, owner, tokenCid) <- setup
+  submit issuer do
+    exerciseCmd tokenCid UpdateValue with newValue = 200
+  pure ()
