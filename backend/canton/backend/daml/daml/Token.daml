@@ -9,7 +9,7 @@ template Token
     symbol: Text
     amount: Int
   where
-    signatory issuer, owner
+    signatory issuer
     observer owner
     ensure amount >= 0
 
@@ -51,27 +51,29 @@ template Token
         assertMsg "Insufficient balance" (amount >= purchaseAmount)
         create this with owner = buyer, amount = purchaseAmount
 
-    choice UpdateValue : ContractId Token
-      with
-        newValue: Int
-      controller issuer
-      do
-        assertMsg "New value must be positive" (newValue > 0)
-        create this with amount = newValue
-
-setup : Script() 
--- (Party, Party, ContractId Token)
+setup : Script (ContractId Token)
 setup = script do
-
-  issuer <- allocateParty "Issuer"
-  owner <- allocateParty "Owner"
-  tokenCid <- submit issuer do
+  -- user_setup_begin
+  lloydsBank <- allocatePartyWithHint "LloydsBank" (PartyIdHint "LloydsBank")
+  alice <- allocatePartyWithHint "Alice" (PartyIdHint "Alice")
+  bob <- allocatePartyWithHint "Bob" (PartyIdHint "Bob")
+  lloydsBankId <- validateUserId "lloydsBank"
+  aliceId <- validateUserId "alice"
+  bobId <- validateUserId "bob"
+  createUser (User lloydsBankId (Some lloydsBank)) [CanActAs lloydsBank]
+  createUser (User aliceId (Some alice)) [CanActAs alice]
+  createUser (User bobId (Some bob)) [CanActAs bob]
+  -- user_setup_end
+  
+  -- issuer <- allocateParty "Issuer"
+  -- owner <- allocateParty "Owner"
+  tokenCid <- submit lloydsBank do
     createCmd Token with
-      issuer = issuer
-      owner = owner
+      issuer = lloydsBank
+      owner = lloydsBank
       symbol = "TKN"
       amount = 100
---   return (issuer, owner, tokenCid)
+  return tokenCid
 
 testMintToken : Script ()
 testMintToken = script do
@@ -105,11 +107,4 @@ testPurchaseToken = script do
     exerciseCmd tokenCid Purchase with
       buyer = buyer
       purchaseAmount = 10
-  pure ()
-
-testUpdateTokenValue : Script ()
-testUpdateTokenValue = script do
-  (issuer, owner, tokenCid) <- setup
-  submit issuer do
-    exerciseCmd tokenCid UpdateValue with newValue = 200
   pure ()
