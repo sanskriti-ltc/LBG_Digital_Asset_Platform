@@ -12,7 +12,7 @@ dependencies:
   - daml-script
 codegen:
   js:
-    output-directory: ../LbgAssetTokenizationDamlModule
+    output-directory: ../src/LbgAssetTokenizationDamlModule
     npm-scope: daml.ts
 # sandbox-options:
 #   # - "--auth-jwt-rs256-crt=./path/to/your-pem-file.pem"

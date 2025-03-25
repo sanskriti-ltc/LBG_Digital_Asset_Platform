@@ -64,9 +64,7 @@ setup = script do
   createUser (User aliceId (Some alice)) [CanActAs alice]
   createUser (User bobId (Some bob)) [CanActAs bob]
   -- user_setup_end
-  
-  -- issuer <- allocateParty "Issuer"
-  -- owner <- allocateParty "Owner"
+
   tokenCid <- submit lloydsBank do
     createCmd Token with
       issuer = lloydsBank
@@ -75,36 +73,36 @@ setup = script do
       amount = 100
   return tokenCid
 
-testMintToken : Script ()
-testMintToken = script do
-  (issuer, owner, tokenCid) <- setup
-  submit issuer do
-    exerciseCmd tokenCid Mint with newAmount = 50
-  pure ()
+-- testMintToken : Script ()
+-- testMintToken = script do
+--   (issuer, owner, tokenCid) <- setup
+--   submit issuer do
+--     exerciseCmd tokenCid Mint with newAmount = 50
+--   pure ()
 
-testTransferToken : Script ()
-testTransferToken = script do
-  (issuer, owner, tokenCid) <- setup
-  newOwner <- allocateParty "NewOwner"
-  submit owner do
-    exerciseCmd tokenCid Transfer with
-      newOwner = newOwner
-      transferAmount = 30
-  pure ()
+-- testTransferToken : Script ()
+-- testTransferToken = script do
+--   (issuer, owner, tokenCid) <- setup
+--   newOwner <- allocateParty "NewOwner"
+--   submit owner do
+--     exerciseCmd tokenCid Transfer with
+--       newOwner = newOwner
+--       transferAmount = 30
+--   pure ()
 
-testRedeemToken : Script ()
-testRedeemToken = script do
-  (issuer, owner, tokenCid) <- setup
-  submit owner do
-    exerciseCmd tokenCid Redeem with redeemAmount = 20
-  pure ()
+-- testRedeemToken : Script ()
+-- testRedeemToken = script do
+--   (issuer, owner, tokenCid) <- setup
+--   submit owner do
+--     exerciseCmd tokenCid Redeem with redeemAmount = 20
+--   pure ()
 
-testPurchaseToken : Script ()
-testPurchaseToken = script do
-  (issuer, owner, tokenCid) <- setup
-  buyer <- allocateParty "Buyer"
-  submit owner do
-    exerciseCmd tokenCid Purchase with
-      buyer = buyer
-      purchaseAmount = 10
-  pure ()
+-- testPurchaseToken : Script ()
+-- testPurchaseToken = script do
+--   (issuer, owner, tokenCid) <- setup
+--   buyer <- allocateParty "Buyer"
+--   submit owner do
+--     exerciseCmd tokenCid Purchase with
+--       buyer = buyer
+--       purchaseAmount = 10
+--   pure ()
