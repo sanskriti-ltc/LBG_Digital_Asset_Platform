@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Ledger } from '@daml/ledger';
 import { MintDto, TransferDto, RedeemDto, PurchaseDto } from './token.dto';
-import { Token } from '../LbgAssetTokenizationDamlModule/LbgAssetTokenization-0.0.1/lib/Token/module'; // Adjust the import path to your generated code
+import { Token } from '../LbgAssetTokenizationDamlModule/LbgAssetTokenization-0.0.1/lib/Token';
 
 @Injectable()
 export class TokenService {

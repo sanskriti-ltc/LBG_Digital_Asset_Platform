@@ -1,5 +1,5 @@
 import { ContractId } from "@daml/types";
-import { Token } from "src/LbgAssetTokenizationDamlModule/LbgAssetTokenization-0.0.1/lib/Token/module";
+import { Token } from "../LbgAssetTokenizationDamlModule/LbgAssetTokenization-0.0.1/lib/Token/module";
 
 export class MintDto {
     issuer: string;
