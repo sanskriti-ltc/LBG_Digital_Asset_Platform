@@ -4,4 +4,4 @@ import * as SupplyChain from './SupplyChain';
 export { SupplyChain } ;
 import * as Token from './Token';
 export { Token } ;
-export declare const packageId = '29d3e5d9d4c715c5860232caa62c95b21592cc7e4200cc2763a60e97f9a8ac84';
+export declare const packageId = 'b4229353ac31d87f825a28628b95d455b24d1857fd18b9d48372067ef46b8a7a';

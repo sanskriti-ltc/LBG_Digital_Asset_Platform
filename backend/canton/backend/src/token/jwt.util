@@ -1,0 +1,15 @@
+import * as jwt from 'jsonwebtoken';
+
+const SECRET_KEY = 'a-string-secret-at-least-256-bits-long';
+
+export function generateUserToken(userId: string): string {
+  const payload = {
+    ledgerId: 'sandbox', // Replace with your actual ledger ID
+    applicationId: 'HTTP-JSON-API-Gateway', // Replace with your actual application ID
+    actAs: [userId],
+    admin: true,
+    exp: Math.floor(Date.now() / 1000) + (60 * 60) // Token expires in 1 hour
+  };
+
+  return jwt.sign(payload, SECRET_KEY, { algorithm: 'HS256' });
+}

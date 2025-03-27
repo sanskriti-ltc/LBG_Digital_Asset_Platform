@@ -20,7 +20,7 @@ export class TokenController {
 
   @Get('getUserDetails')
   async listUserRights() {
-    const parties = await this.tokenService.listUserRights('alice');
+    const parties = await this.tokenService.listUserRights('lloydsBank');
     return parties;
   }
 
@@ -28,6 +28,12 @@ export class TokenController {
   async getPartyDetails(@Param('partyId') partyId: string) {
     const partyDetails = await this.tokenService.getPartyDetails(partyId);
     return partyDetails;
+  }
+
+  @Get('listUserContracts')
+  async getUserContracts() {
+    const contracts = await this.tokenService.getUserContracts();
+    return contracts;
   }
   
   @Post('mint')

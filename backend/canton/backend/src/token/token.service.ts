@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Ledger } from '@daml/ledger';
 import { MintDto, TransferDto, RedeemDto, PurchaseDto } from './token.dto';
-import { Token } from '@daml.ts/ledger/lib/Token';
+import { Token } from '@daml.ts/ledger-0.0.1/lib/Token';
 import { escape } from 'querystring';
 
 @Injectable()
 export class TokenService {
   private ledger: Ledger;
-  private token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwczovL2RhbWwuY29tL2xlZGdlci1hcGkiOnsibGVkZ2VySWQiOiJzYW5kYm94IiwiYXBwbGljYXRpb25JZCI6Ikxsb3lkc0Jhbms6OjEyMjBlZDcxZjIyZDZkNWMyNTM1ODJhYmZkZDRhMzQ1MTk0Mjk0Zjk5YjNhZmJiNWIwZWY4ODYxNzk3MjRiNjMxYzlkIiwiYWN0QXMiOlsibGxveWRzQmFuayJdfX0.ISLaEjS5fqiPLIlJ2BXl--bM0QI7_bmkZZQnSDbJ8QM";
+  private token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwczovL2RhbWwuY29tL2xlZGdlci1hcGkiOnsibGVkZ2VySWQiOiJzYW5kYm94IiwiYXBwbGljYXRpb25JZCI6IkhUVFAtSlNPTi1BUEktR2F0ZXdheSIsImFjdEFzIjpbImxsb3lkc0JhbmsiXX19.JdJGDwUaO6YKcEkClPf9ZbVz41PgfMPTLsNKpSb7W7Y";
 
   constructor() {
     this.ledger = new Ledger({ token: this.token, httpBaseUrl: 'http://localhost:7575/' });
@@ -24,7 +24,7 @@ export class TokenService {
   }
 
   async listUserRights(userId: string) {
-    const response = await this.ledger.listUserRights(userId);
+    const response = await this.ledger.listUserRights();
     console.log(response)
     return response;
   }
@@ -34,6 +34,13 @@ export class TokenService {
   {
     // const response = await this.ledger.getPartyDetails(partyId);
     // return response;
+  }
+
+  async getUserContracts(): Promise<any[]> {
+    const query = { owner: 'alice' };
+    console.log('user called getUserContracts')
+    const contracts = await this.ledger.query(Token);
+    return contracts;
   }
 
   async mintToken(mintDto: MintDto) {
