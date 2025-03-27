@@ -5,6 +5,11 @@ import { MintDto, PurchaseDto, RedeemDto, TransferDto } from './token.dto';
 @Controller('token')
 export class TokenController {
   constructor(private readonly tokenService: TokenService) {}
+  
+  @Post('create-user')
+  async createUser(@Body() createUserDto) {
+    return this.tokenService.createUser(createUserDto);
+  }
 
   @Get()
   async getParties() {
@@ -18,24 +23,24 @@ export class TokenController {
     return parties;
   }
 
-  @Get('getUserDetails')
+  @Get('listUserRights')
   async listUserRights() {
     const parties = await this.tokenService.listUserRights('lloydsBank');
     return parties;
   }
 
-  @Get(':partyId')
-  async getPartyDetails(@Param('partyId') partyId: string) {
-    const partyDetails = await this.tokenService.getPartyDetails(partyId);
-    return partyDetails;
-  }
-
-  @Get('listUserContracts')
+  @Get('getUserContracts')
   async getUserContracts() {
     const contracts = await this.tokenService.getUserContracts();
     return contracts;
   }
   
+  @Get('generateUserToken')
+  async generateUserToken(@Body() reqBody) {
+    const token = await this.tokenService.generateUserToken(reqBody.userId);
+    return { token };
+  }
+
   @Post('mint')
   async mintToken(@Body() mintDto: MintDto) {
     return this.tokenService.mintToken(mintDto);
