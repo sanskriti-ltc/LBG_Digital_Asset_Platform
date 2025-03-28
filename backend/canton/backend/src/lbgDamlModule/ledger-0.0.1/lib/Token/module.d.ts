@@ -54,8 +54,10 @@ export declare const Mint:
 export declare type Token = {
   issuer: damlTypes.Party;
   owner: damlTypes.Party;
-  symbol: string;
   amount: damlTypes.Int;
+  name: string;
+  symbol: string;
+  tokenValue: damlTypes.Int;
 };
 
 export declare interface TokenInterface {
@@ -66,7 +68,7 @@ export declare interface TokenInterface {
   Purchase: damlTypes.Choice<Token, Purchase, damlTypes.ContractId<Token>, undefined> & damlTypes.ChoiceFrom<damlTypes.Template<Token, undefined>>;
 }
 export declare const Token:
-  damlTypes.Template<Token, undefined, 'b4229353ac31d87f825a28628b95d455b24d1857fd18b9d48372067ef46b8a7a:Token:Token'> &
+  damlTypes.Template<Token, undefined, 'cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4:Token:Token'> &
   damlTypes.ToInterface<Token, never> &
   TokenInterface;
 

@@ -41,7 +41,7 @@ export declare interface OrderInterface {
   AcceptOrder: damlTypes.Choice<Order, AcceptOrder, damlTypes.ContractId<Order>, undefined> & damlTypes.ChoiceFrom<damlTypes.Template<Order, undefined>>;
 }
 export declare const Order:
-  damlTypes.Template<Order, undefined, 'b4229353ac31d87f825a28628b95d455b24d1857fd18b9d48372067ef46b8a7a:SupplyChain:Order'> &
+  damlTypes.Template<Order, undefined, 'cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4:SupplyChain:Order'> &
   damlTypes.ToInterface<Order, never> &
   OrderInterface;
 

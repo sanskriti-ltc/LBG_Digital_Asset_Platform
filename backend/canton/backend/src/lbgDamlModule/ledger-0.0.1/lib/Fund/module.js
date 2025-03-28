@@ -30,7 +30,7 @@ exports.Transfer = {
 
 exports.SterlingShortTermMoneyMarketFundVASSTAI = damlTypes.assembleTemplate(
 {
-  templateId: 'b4229353ac31d87f825a28628b95d455b24d1857fd18b9d48372067ef46b8a7a:Fund:SterlingShortTermMoneyMarketFundVASSTAI',
+  templateId: 'cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4:Fund:SterlingShortTermMoneyMarketFundVASSTAI',
   keyDecoder: damlTypes.lazyMemo(function () { return jtv.constant(undefined); }),
   keyEncode: function () { throw 'EncodeError'; },
   decoder: damlTypes.lazyMemo(function () { return jtv.object({owner: damlTypes.Party.decoder, issuer: damlTypes.Party.decoder, amount: damlTypes.Numeric(10).decoder, participants: damlTypes.List(damlTypes.Party).decoder, couponRate: damlTypes.Int.decoder, maturityDate: damlTypes.Text.decoder, }); }),
@@ -66,5 +66,5 @@ exports.SterlingShortTermMoneyMarketFundVASSTAI = damlTypes.assembleTemplate(
 );
 
 
-damlTypes.registerTemplate(exports.SterlingShortTermMoneyMarketFundVASSTAI, ['b4229353ac31d87f825a28628b95d455b24d1857fd18b9d48372067ef46b8a7a', 'b4229353ac31d87f825a28628b95d455b24d1857fd18b9d48372067ef46b8a7a']);
+damlTypes.registerTemplate(exports.SterlingShortTermMoneyMarketFundVASSTAI, ['cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4', 'cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4']);
 

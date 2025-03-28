@@ -1,6 +1,18 @@
 import { ContractId } from "@daml/types";
 import { Token } from "@daml.ts/ledger-0.0.1/lib/Token/module";
 
+export class CreateContractDto {
+  templateId: string;
+  issuer: string;
+  owner: string;
+  symbol: string;
+  amount: string;
+  name: string;
+  tokenValue: string;
+  payload?: {
+  }
+}
+
 export class MintDto {
   issuer: string;
   tokenCid: ContractId<Token>;
@@ -27,7 +39,7 @@ export class PurchaseDto {
   purchaseAmount: string;
 }
 
-export class createUserDto {
+export class CreateUserDto {
   name: string;
   userId: string; 
   primaryParty: string;

@@ -31,16 +31,18 @@ export class TokenService {
     return response;
   }
 
-  async listUserRights(userId: string) {
+  async listUserRights() {
     const response = await this.ledger.listUserRights();
-    console.log(response)
     return response;
   }
 
   async getUserContracts(): Promise<any[]> {
-    const query = { owner: 'alice' };
     const contracts = await this.ledger.query(Token);
     return contracts;
+  }
+
+  async createContract(createContractDto) {
+    return this.ledger.create(Token, createContractDto);
   }
 
   async mintToken(mintDto: MintDto) {
@@ -53,16 +55,16 @@ export class TokenService {
     return this.ledger.exercise(Token.Transfer, tokenCid, { newOwner, transferAmount });
   }
 
-  // async redeemToken(redeemDto: RedeemDto) {
-  //   const { owner, tokenCid, redeemAmount } = redeemDto;
-  //   return this.ledger.exercise(Token.Redeem, tokenCid, { redeemAmount });
-  // }
+  async redeemToken(redeemDto: RedeemDto) {
+    const { owner, tokenCid, redeemAmount } = redeemDto;
+    return this.ledger.exercise(Token.Redeem, tokenCid, { redeemAmount });
+  }
 
   // async purchaseToken(purchaseDto: PurchaseDto) {
   //   const { owner, tokenCid, buyer, purchaseAmount } = purchaseDto;
   //   return this.ledger.exercise(Token.Purchase, tokenCid, { buyer, purchaseAmount });
   // }
-  
+
   async generateUserToken(userId: string): Promise<string> {
     const SECRET_KEY = 'a-string-secret-at-least-256-bits-long';
     const payload = {
@@ -77,9 +79,5 @@ export class TokenService {
     this.token = jwt.sign(payload, SECRET_KEY, { algorithm: 'HS256' });
     this.ledger = new Ledger({ token: this.token, httpBaseUrl: 'http://localhost:7575/' });
     return this.token
-  }
-
-  private async createParty(partyName: string) {
-    return await this.ledger.allocateParty({ identifierHint: partyName, displayName: partyName });
   }
 }

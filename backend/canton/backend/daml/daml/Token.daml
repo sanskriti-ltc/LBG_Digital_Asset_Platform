@@ -6,8 +6,10 @@ template Token
   with
     issuer: Party
     owner: Party
-    symbol: Text
     amount: Int
+    name: Text
+    symbol: Text
+    tokenValue: Int
   where
     signatory issuer
     observer owner
@@ -67,10 +69,12 @@ setup = script do
 
   tokenCid <- submit lloydsBank do
     createCmd Token with
+      name = "Bond"
       issuer = lloydsBank
       owner = lloydsBank
       symbol = "TKN"
       amount = 100
+      tokenValue = 20
   return tokenCid
 
 -- testMintToken : Script ()

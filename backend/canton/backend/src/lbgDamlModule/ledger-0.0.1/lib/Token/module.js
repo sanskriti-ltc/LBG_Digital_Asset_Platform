@@ -67,16 +67,18 @@ exports.Mint = {
 
 exports.Token = damlTypes.assembleTemplate(
 {
-  templateId: 'b4229353ac31d87f825a28628b95d455b24d1857fd18b9d48372067ef46b8a7a:Token:Token',
+  templateId: 'cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4:Token:Token',
   keyDecoder: damlTypes.lazyMemo(function () { return jtv.constant(undefined); }),
   keyEncode: function () { throw 'EncodeError'; },
-  decoder: damlTypes.lazyMemo(function () { return jtv.object({issuer: damlTypes.Party.decoder, owner: damlTypes.Party.decoder, symbol: damlTypes.Text.decoder, amount: damlTypes.Int.decoder, }); }),
+  decoder: damlTypes.lazyMemo(function () { return jtv.object({issuer: damlTypes.Party.decoder, owner: damlTypes.Party.decoder, amount: damlTypes.Int.decoder, name: damlTypes.Text.decoder, symbol: damlTypes.Text.decoder, tokenValue: damlTypes.Int.decoder, }); }),
   encode: function (__typed__) {
   return {
     issuer: damlTypes.Party.encode(__typed__.issuer),
     owner: damlTypes.Party.encode(__typed__.owner),
-    symbol: damlTypes.Text.encode(__typed__.symbol),
     amount: damlTypes.Int.encode(__typed__.amount),
+    name: damlTypes.Text.encode(__typed__.name),
+    symbol: damlTypes.Text.encode(__typed__.symbol),
+    tokenValue: damlTypes.Int.encode(__typed__.tokenValue),
   };
 }
 ,
@@ -125,5 +127,5 @@ exports.Token = damlTypes.assembleTemplate(
 );
 
 
-damlTypes.registerTemplate(exports.Token, ['b4229353ac31d87f825a28628b95d455b24d1857fd18b9d48372067ef46b8a7a', 'b4229353ac31d87f825a28628b95d455b24d1857fd18b9d48372067ef46b8a7a']);
+damlTypes.registerTemplate(exports.Token, ['cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4', 'cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4']);
 

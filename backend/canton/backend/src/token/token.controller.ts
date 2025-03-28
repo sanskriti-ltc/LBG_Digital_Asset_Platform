@@ -1,13 +1,13 @@
 import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { TokenService } from './token.service';
-import { MintDto, PurchaseDto, RedeemDto, TransferDto } from './token.dto';
+import { CreateContractDto, CreateUserDto, MintDto, PurchaseDto, RedeemDto, TransferDto } from './token.dto';
 
 @Controller('token')
 export class TokenController {
   constructor(private readonly tokenService: TokenService) {}
   
   @Post('create-user')
-  async createUser(@Body() createUserDto) {
+  async createUser(@Body() createUserDto: CreateUserDto) {
     return this.tokenService.createUser(createUserDto);
   }
 
@@ -25,7 +25,7 @@ export class TokenController {
 
   @Get('listUserRights')
   async listUserRights() {
-    const parties = await this.tokenService.listUserRights('lloydsBank');
+    const parties = await this.tokenService.listUserRights();
     return parties;
   }
 
@@ -41,20 +41,25 @@ export class TokenController {
     return { token };
   }
 
+  @Post('create')
+  async createContract(@Body() createContractDto: CreateContractDto) {
+    return this.tokenService.createContract(createContractDto);
+  }
+
   @Post('mint')
   async mintToken(@Body() mintDto: MintDto) {
     return this.tokenService.mintToken(mintDto);
   }
 
-  // @Post('transfer')
-  // async transferToken(@Body() transferDto: TransferDto) {
-  //   return this.tokenService.transferToken(transferDto);
-  // }
+  @Post('transfer')
+  async transferToken(@Body() transferDto: TransferDto) {
+    return this.tokenService.transferToken(transferDto);
+  }
 
-  // @Post('redeem')
-  // async redeemToken(@Body() redeemDto: RedeemDto) {
-  //   return this.tokenService.redeemToken(redeemDto);
-  // }
+  @Post('redeem')
+  async redeemToken(@Body() redeemDto: RedeemDto) {
+    return this.tokenService.redeemToken(redeemDto);
+  }
 
   // @Post('purchase')
   // async purchaseToken(@Body() purchaseDto: PurchaseDto) {
