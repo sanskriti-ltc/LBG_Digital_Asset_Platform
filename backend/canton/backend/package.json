@@ -22,7 +22,7 @@
   "dependencies": {
     "@daml/ledger": "^2.10.0",
     "@daml/types": "^2.10.0",
-    "@daml.ts/ledger": "file:src/lbgDamlModule/ledger-0.0.1",
+    "@daml.ts/ledger-0.0.1": "file:src/lbgDamlModule/ledger-0.0.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
