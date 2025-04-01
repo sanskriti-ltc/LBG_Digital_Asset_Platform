@@ -68,7 +68,7 @@ export declare interface TokenInterface {
   Purchase: damlTypes.Choice<Token, Purchase, damlTypes.ContractId<Token>, undefined> & damlTypes.ChoiceFrom<damlTypes.Template<Token, undefined>>;
 }
 export declare const Token:
-  damlTypes.Template<Token, undefined, 'cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4:Token:Token'> &
+  damlTypes.Template<Token, undefined, '5761d37bf11a5049d5a30f5156e1fe5eb3f4c5f789e32c8da6d1e1e096a5f723:Token:Token'> &
   damlTypes.ToInterface<Token, never> &
   TokenInterface;
 

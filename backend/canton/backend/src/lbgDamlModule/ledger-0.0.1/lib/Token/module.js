@@ -67,7 +67,7 @@ exports.Mint = {
 
 exports.Token = damlTypes.assembleTemplate(
 {
-  templateId: 'cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4:Token:Token',
+  templateId: '5761d37bf11a5049d5a30f5156e1fe5eb3f4c5f789e32c8da6d1e1e096a5f723:Token:Token',
   keyDecoder: damlTypes.lazyMemo(function () { return jtv.constant(undefined); }),
   keyEncode: function () { throw 'EncodeError'; },
   decoder: damlTypes.lazyMemo(function () { return jtv.object({issuer: damlTypes.Party.decoder, owner: damlTypes.Party.decoder, amount: damlTypes.Int.decoder, name: damlTypes.Text.decoder, symbol: damlTypes.Text.decoder, tokenValue: damlTypes.Int.decoder, }); }),
@@ -127,5 +127,5 @@ exports.Token = damlTypes.assembleTemplate(
 );
 
 
-damlTypes.registerTemplate(exports.Token, ['cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4', 'cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4']);
+damlTypes.registerTemplate(exports.Token, ['5761d37bf11a5049d5a30f5156e1fe5eb3f4c5f789e32c8da6d1e1e096a5f723', '5761d37bf11a5049d5a30f5156e1fe5eb3f4c5f789e32c8da6d1e1e096a5f723']);
 

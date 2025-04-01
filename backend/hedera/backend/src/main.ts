@@ -6,8 +6,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // Swagger configuration
   const config = new DocumentBuilder()
-    .setTitle('API Documentation')
-    .setDescription('API documentation for your project')
+    .setTitle('Daml Token API Documentation')
+    .setDescription('API for managing tokens on Hedera ledger')
     .setVersion('1.0')
     .build();
 
