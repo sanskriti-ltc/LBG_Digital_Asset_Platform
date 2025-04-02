@@ -1,0 +1,499 @@
+{
+  "name": "LBG Canton POC",
+  "version": "1",
+  "items": [
+    {
+      "type": "http",
+      "name": "app",
+      "filename": "app.bru",
+      "seq": 1,
+      "request": {
+        "url": "http://localhost:3000",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "create-user",
+      "filename": "create-user.bru",
+      "seq": 8,
+      "request": {
+        "url": "http://localhost:3000/token/create-user",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"userId\": \"mahesh\",\n  \"name\": \"mahesh\",\n  \"primaryParty\": \"mahesh::1220c8615c25e21b16dd8591ef7353be3c3e8d1ae6240296837780cdce350dd278cf\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "generateUserToken",
+      "filename": "generateUserToken.bru",
+      "seq": 9,
+      "request": {
+        "url": "http://localhost:3000/token/generateUserToken?userId=alice",
+        "method": "GET",
+        "headers": [],
+        "params": [
+          {
+            "name": "userId",
+            "value": "alice",
+            "type": "query",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"userId\": \"lloydsBank\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "getUserContracts",
+      "filename": "getUserContracts.bru",
+      "seq": 13,
+      "request": {
+        "url": "http://localhost:3000/token/getUserContracts",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "ledger",
+      "filename": "ledger.bru",
+      "seq": 12,
+      "request": {
+        "url": "http://localhost:3000/token",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "listUserRights",
+      "filename": "listUserRights.bru",
+      "seq": 11,
+      "request": {
+        "url": "http://localhost:3000/token/listUserRights",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "listUsers",
+      "filename": "listUsers.bru",
+      "seq": 10,
+      "request": {
+        "url": "http://localhost:3000/token/listUsers",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token create",
+      "filename": "token create.bru",
+      "seq": 2,
+      "request": {
+        "url": "http://localhost:3000/token/create",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"templateId\": \"cd995d69e988e38fea81c2c1f5c786ebf0d5ef57165391121e8a1bea40a5c0f4:Token:Token\",\n  \"issuer\": \"LloydsBank::1220d603d6e02a5f78044fe473c871b5696529d83a5515c87e8acd8374500d46bc70\",\n  \"owner\": \"LloydsBank::1220d603d6e02a5f78044fe473c871b5696529d83a5515c87e8acd8374500d46bc70\",\n  \"symbol\": \"TokenTest3\",\n  \"amount\": \"2000\",\n  \"name\": \"Bond\",\n  \"tokenValue\": \"20\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token mint",
+      "filename": "token mint.bru",
+      "seq": 3,
+      "request": {
+        "url": "http://localhost:3000/token/mint",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"issuer\": \"LloydsBank::1220c8615c25e21b16dd8591ef7353be3c3e8d1ae6240296837780cdce350dd278cf\",\n  \"tokenCid\": \"001ae857a76c242e3834e27ba2f50bf01296517496524585f19afbbe01d6c503a8ca0312204ffdf04beb793de83a0bc3f824f159d3c5eebfb3216491d95d7453ee0c29442d\",\n  \"newAmount\": \"20\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token purchase",
+      "filename": "token purchase.bru",
+      "seq": 6,
+      "request": {
+        "url": "http://localhost:3000/token/purchase",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"tokenId\": \"0.0.5723208\",\n  \"amount\": 20,\n  \"sender\": \"bob\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token redeem",
+      "filename": "token redeem.bru",
+      "seq": 7,
+      "request": {
+        "url": "http://localhost:3000/token/redeem",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"owner\": \"Lloyds::1220c8615c25e21b16dd8591ef7353be3c3e8d1ae6240296837780cdce350dd278cf\",\n  \"tokenCid\": \"007cf8a99e7fcdd459f3741c636382cf4de067804693f9bb645ced23062354017fca031220edbd5af591d6cb4a2c64dde65141dc395c20a968c181c0b6b781a347b56f97b4\",\n  \"redeemAmount\": 20\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "token transfer",
+      "filename": "token transfer.bru",
+      "seq": 5,
+      "request": {
+        "url": "http://localhost:3000/token/transfer",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n\"owner\":\"LloydsBank::1220c8615c25e21b16dd8591ef7353be3c3e8d1ae6240296837780cdce350dd278cf\",\n\"tokenCid\":\"00b757b8848503eab8010915658cdf82f30f14618ea629ac199145ece6070b9714ca0312203c9c96706398e3fcc71abeba14290eb5337af138739853df047cad3404df75f8\",\n\"newOwner\":\"Alice::1220c8615c25e21b16dd8591ef7353be3c3e8d1ae6240296837780cdce350dd278cf\",\n\"transferAmount\":\"20\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "folder",
+      "name": "LBG Canton Ledger",
+      "filename": "LBG Canton Ledger",
+      "root": {
+        "meta": {
+          "name": "LBG Canton Ledger"
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "exerciseCmd",
+          "filename": "exerciseCmd.bru",
+          "seq": 7,
+          "request": {
+            "url": "http://127.0.0.1:7575/v1/exercise",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"templateId\": \"77087bbe690150e37e069cfffc77c9e4ad5f43f007b6ceaaf51cda87385a54e6:User:User\",\n  \"key\": \"party-15fcd23b-ef14-4b2c-88cd-c1c190339ed3::122038f486615e8af795d2e8c6133851e11b3b938d75280419577170cf881a317579\",\n  \"choice\": \"Follow\",\n  \"argument\": {\n    \"userToFollow\": \"party-028ab79e-ae17-4321-bbb0-19ba5a0c61ef::122038f486615e8af795d2e8c6133851e11b3b938d75280419577170cf881a317579\"\n  }\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "user rights",
+          "filename": "user rights.bru",
+          "seq": 3,
+          "request": {
+            "url": "http://127.0.0.1:7575/v1/user/rights",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "createCmd",
+          "filename": "createCmd.bru",
+          "seq": 6,
+          "request": {
+            "url": "http://127.0.0.1:7575/v1/create",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"templateId\": \"3b5137227b18c0df8173876f2d89db2e1b1b5b5d1f91f677f1c78920bb0c6bbf:Token:Token\",  \n  \"payload\": {\n    \"issuer\": \"lloydsBank::122038f486615e8af795d2e8c6133851e11b3b938d75280419577170cf881a317579\",\n    \"owner\": \"alice::122038f486615e8af795d2e8c6133851e11b3b938d75280419577170cf881a317579\",\n    \"symbol\": \"TKN\",\n    \"amount\": 100\n  }\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "user",
+          "filename": "user.bru",
+          "seq": 1,
+          "request": {
+            "url": "http://127.0.0.1:7575/v1/user",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "fetch",
+          "filename": "fetch.bru",
+          "seq": 4,
+          "request": {
+            "url": "http://127.0.0.1:7575/v1/fetch",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"templateId\": \"b4229353ac31d87f825a28628b95d455b24d1857fd18b9d48372067ef46b8a7a:Token:Token\",\n  \"key\": \"lloydsBank::122038f486615e8af795d2e8c6133851e11b3b938d75280419577170cf881a317579\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "environments": [],
+  "root": {
+    "request": {
+      "auth": {
+        "mode": "bearer",
+        "bearer": {
+          "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsbG95ZHNCYW5rIiwic2NvcGUiOiJkYW1sX2xlZGdlcl9hcGkifQ.nZFToKxwVVP__tOzcBnGZ0TRMHxOp_RooCfs019MO10"
+        }
+      }
+    }
+  },
+  "brunoConfig": {
+    "version": "1",
+    "name": "LBG Canton POC",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ],
+    "size": 0.006011962890625,
+    "filesCount": 20
+  }
+}
