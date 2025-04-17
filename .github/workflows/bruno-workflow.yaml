@@ -34,21 +34,22 @@ jobs:
       - name: Start Hedera Backend
         run: |
           npm run start &
-          sleep 100 # Wait for the backend to start
+          sleep 15 # Wait for the backend to start
 
       # Step 5: Install Bruno CLI
       - name: Install Bruno CLI
         run: npm install -g @usebruno/cli
 
-    #   # Step 6: Run Bruno Collection and Generate Reports
-    #   - name: Run Bruno Tests
-    #     run: |
-    #       mkdir reports
-    #       bru run --insecure --reporter-json ./reports/results.json --reporter-html ./reports/results.html
+      # Step 6: Run Bruno Collection and Generate Reports
+      - name: Run Bruno Tests
+        run: |
+          cd ../
+          mkdir reports
+          bru run --insecure --reporter-json ./reports/results.json --reporter-html ./reports/results.html
 
-    #   # Step 7: Upload Reports
-    #   - name: Upload Test Reports
-    #     uses: actions/upload-artifact@v4
-    #     with:
-    #       name: bruno-reports
-    #       path: ./reports/
+      # Step 7: Upload Reports
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: bruno-reports
+          path: ./reports/
