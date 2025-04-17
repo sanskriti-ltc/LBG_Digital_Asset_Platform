@@ -43,7 +43,7 @@ jobs:
       # Step 6: Run Bruno Collection and Generate Reports
       - name: Run Bruno Tests
         run: |
-          cd ../
+          cd ..\hedera-bruno-collection\
           mkdir reports
           bru run --insecure --reporter-json ./reports/results.json --reporter-html ./reports/results.html
 
