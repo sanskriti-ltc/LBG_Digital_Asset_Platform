@@ -26,14 +26,14 @@ jobs:
       # Step 3: Install dependencies
       - name: Install Dependencies
         run: |
-          cd D:\a\LBG_Digital_Asset_Platform\backend\hedera\backend\
+          cd ./backend/hedera/backend/
           npm config set strict-ssl false
           npm install
 
       # Step 4: Start the Hedera backend
       - name: Start Hedera Backend
         run: |
-          cd D:\a\LBG_Digital_Asset_Platform\backend\hedera\backend\
+          cd ./backend/hedera/backend/
           npm run start &
           sleep 15 # Wait for the backend to start
 
@@ -44,7 +44,7 @@ jobs:
       # Step 6: Run Bruno Collection and Generate Reports
       - name: Run Bruno Tests
         run: |
-          cd D:\a\LBG_Digital_Asset_Platform\backend\hedera\hedera-bruno-collection\
+          cd ./backend/hedera/hedera-bruno-collection/
           mkdir ../reports
           bru run --insecure --reporter-json ../reports/results.json --reporter-html ../reports/results.html
 
