@@ -56,7 +56,7 @@ jobs:
         working-directory: ./backend/hedera/hedera-bruno-collection/
         run: |
           mkdir -p ../reports
-          bru run --env environments/hedera-env.bru --insecure --reporter-json ../reports/results.json --reporter-html ../reports/results.html
+          bru run --env hedera-env.bru --insecure --reporter-json ../reports/results.json --reporter-html ../reports/results.html
 
       # Step 7: Upload Reports
       - name: Upload Test Reports
