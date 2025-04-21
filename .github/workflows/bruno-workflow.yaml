@@ -34,7 +34,6 @@ jobs:
       - name: Start Hedera Backend
         working-directory: ./backend/hedera/backend/
         run: |
-          cd ./backend/hedera/backend
           npm run start > backend.log 2?&1 &
           echo $! > backend_pid.txt
           sleep 15 # Wait for the backend to start
