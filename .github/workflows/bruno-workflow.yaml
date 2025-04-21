@@ -34,8 +34,18 @@ jobs:
       - name: Start Hedera Backend
         run: |
           cd ./backend/hedera/backend/
-          npm run start &
+          npm run start > backend.log 2?&1 &
+          echo $! > backend_pid.txt
           sleep 15 # Wait for the backend to start
+          for i in {1..10}; do
+            if curl -s http://localhost:3000/; then
+              echo "backend is up!"
+              break
+            else
+              echo "waiting for backend..."
+              sleep 10
+            fi
+          done
 
       # Step 5: Install Bruno CLI
       - name: Install Bruno CLI
