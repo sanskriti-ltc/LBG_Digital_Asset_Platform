@@ -11,7 +11,7 @@ on:
 
 jobs:
   run-bruno-tests:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       # Step 1: Check out the repository
       - name: Checkout Repository
@@ -25,15 +25,16 @@ jobs:
 
       # Step 3: Install dependencies
       - name: Install Dependencies
+        working-directory: ./backend/hedera/backend/
         run: |
-          cd ./backend/hedera/backend/
           npm config set strict-ssl false
           npm install
 
       # Step 4: Start the Hedera backend
       - name: Start Hedera Backend
+        working-directory: ./backend/hedera/backend/
         run: |
-          cd ./backend/hedera/backend/
+          cd ./backend/hedera/backend
           npm run start > backend.log 2?&1 &
           echo $! > backend_pid.txt
           sleep 15 # Wait for the backend to start
@@ -53,9 +54,9 @@ jobs:
 
       # Step 6: Run Bruno Collection and Generate Reports
       - name: Run Bruno Tests
+        working-directory: ./backend/hedera/hedera-bruno-collection/
         run: |
-          cd ./backend/hedera/hedera-bruno-collection/
-          mkdir ../reports
+          mkdir -p ../reports
           bru run --insecure --reporter-json ../reports/results.json --reporter-html ../reports/results.html
 
       # Step 7: Upload Reports
@@ -63,4 +64,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bruno-reports
-          path: ./reports/
+          path: /backend/hedera/reports/
