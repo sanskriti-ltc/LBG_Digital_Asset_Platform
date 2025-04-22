@@ -1,0 +1,15 @@
+meta {
+  name: account account-balance
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{rootUrl}}/token/account-balance?sender=operator
+  body: none
+  auth: inherit
+}
+
+params:query {
+  sender: operator
+}

@@ -1,0 +1,15 @@
+meta {
+  name: account account-assets
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{rootUrl}}/token/account-assets?sender=operator
+  body: none
+  auth: inherit
+}
+
+params:query {
+  sender: operator
+}

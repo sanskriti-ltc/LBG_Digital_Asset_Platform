@@ -1,0 +1,19 @@
+meta {
+  name: purchase token
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{rootUrl}}/token/purchase
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "tokenId": "{{operatorTokenId}}",
+    "amount": 100,
+    "sender": "operator"
+  }
+}

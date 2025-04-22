@@ -1,0 +1,19 @@
+meta {
+  name: redeem token
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{rootUrl}}/token/redeem
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "tokenId": "{{operatorTokenId}}",
+    "amount": 100,
+    "sender": "operator"
+  }
+}

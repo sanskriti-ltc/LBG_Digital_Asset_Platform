@@ -1,0 +1,18 @@
+meta {
+  name: associate token
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{rootUrl}}/token/associate
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "tokenId": "{{operatorTokenId}}",
+    "sender": "bob"
+  }
+}

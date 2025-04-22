@@ -1,0 +1,16 @@
+meta {
+  name: account token detail
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{rootUrl}}/token/asset?sender=operator&tokenId={{operatorTokenId}}
+  body: none
+  auth: inherit
+}
+
+params:query {
+  sender: operator
+  tokenId: {{operatorTokenId}}
+}

@@ -1,0 +1,20 @@
+meta {
+  name: transfer token
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{rootUrl}}/token/transfer
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "tokenId": "{{operatorTokenId}}",
+    "receiver": "bob",
+    "sender": "operator",
+    "amount": 100
+  }
+}
